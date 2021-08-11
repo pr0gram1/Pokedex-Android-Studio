@@ -17,14 +17,15 @@ import com.example.pokedex.models.Pokemon;
 
 
 
-public class ListaPokemonAdapter extends RecyclerView.Adapter<ListaPokemonAdapter.ViewHolder> {
+public class AdapterPokeList extends RecyclerView.Adapter<AdapterPokeList.ViewHolder> {
 
-    private ArrayList<Pokemon> dataset;
+    private ArrayList<Pokemon> arrayRes;
+
     private Context context;
 
-    public ListaPokemonAdapter(Context context) {
+    public AdapterPokeList(Context context) {
         this.context = context;
-        dataset = new ArrayList<>();
+        arrayRes = new ArrayList<>();
 
 
     }
@@ -33,45 +34,45 @@ public class ListaPokemonAdapter extends RecyclerView.Adapter<ListaPokemonAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup patent, int viewType) {
-        View view = LayoutInflater.from(patent.getContext()).inflate(R.layout.item_pokemon,patent, false);
+        View view = LayoutInflater.from(patent.getContext()).inflate(R.layout.poke_chararcter,patent, false);
         return new ViewHolder(view);
 
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Pokemon p = dataset.get(position);
-        holder.nombreTextView.setText(p.getName());
+        Pokemon p = arrayRes.get(position);
+        holder.viewText.setText(p.getName());
 
         Glide.with(context)
-                .load("http://pokeapi.co/media/sprites/pokemon/"+p.getNumber() +".png")
+                .load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"+p.getNumber() +".png")
                 .centerCrop()
-                //.crossFade()
+                .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.fotoImageView);
+                .into(holder.viewImage);
     }
 
     @Override
     public int getItemCount() {
-        return dataset.size();
+        return arrayRes.size();
     }
 
-    public void adicionarListaPokemon(ArrayList<Pokemon> listaPokemon) {
+    public void addPokeList(ArrayList<Pokemon> listaPokemon) {
 
-        dataset.addAll(listaPokemon);
+        arrayRes.addAll(listaPokemon);
         notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        private ImageView fotoImageView;
-        private TextView nombreTextView;
+        private ImageView viewImage;
+        private TextView viewText;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            fotoImageView = (ImageView) itemView.findViewById(R.id.fotoImageView);
-            nombreTextView = (TextView) itemView.findViewById(R.id.nombreTextView);
+            viewImage = (ImageView) itemView.findViewById(R.id.viewImage);
+            viewText = (TextView) itemView.findViewById(R.id.viewText);
         }
     }
 }

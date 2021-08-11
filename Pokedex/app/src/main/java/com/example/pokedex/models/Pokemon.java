@@ -23,8 +23,8 @@ public class Pokemon {
     }
 
     public int getNumber() {
-        String[] urlPartes = url.split("/");
-        return Integer.parseInt(urlPartes[urlPartes.length -1]);
+        String[] urlPart = url.split("/");
+        return Integer.parseInt(urlPart[urlPart.length -1]);
     }
 
     public void setNumber(int number) {

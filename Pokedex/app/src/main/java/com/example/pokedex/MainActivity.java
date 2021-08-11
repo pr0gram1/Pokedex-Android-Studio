@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.pokedex.models.Pokemon;
-import com.example.pokedex.models.PokemonResquesta;
+import com.example.pokedex.models.RequestPokemon;
 import com.example.pokedex.pokeapi.PokeapiService;
 
 import java.util.ArrayList;
@@ -21,17 +21,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     private static final String TAG = "POKEDEX";
 
     private Retrofit retrofit;
 
     private RecyclerView recyclerView;
-    private ListaPokemonAdapter listaPokemonAdapter;
+    private AdapterPokeList listPoker;
 
 
     private int offset;
 
-    private boolean aptoParaCargar;
+    private boolean forUpload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        listaPokemonAdapter = new ListaPokemonAdapter(this);
-        recyclerView.setAdapter(listaPokemonAdapter);
+        listPoker = new AdapterPokeList(this);
+        recyclerView.setAdapter(listPoker);
         recyclerView.setHasFixedSize(true);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
@@ -54,13 +56,13 @@ public class MainActivity extends AppCompatActivity {
                     int totalItemCount = layoutManager.getItemCount();
                     int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
 
-                    if (aptoParaCargar) {
+                    if (forUpload) {
                         if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                            Log.i(TAG, "Llegamos al final.");
+                            Log.i(TAG, "End.");
 
-                            aptoParaCargar = false;
+                            forUpload = false;
                             offset += 20;
-                            obtenerDatos(offset);
+                            dataObtain(offset);
                         }
                     }
                 }
@@ -69,30 +71,30 @@ public class MainActivity extends AppCompatActivity {
 
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://pokeapi.co/api/v2/")
+                .baseUrl("https://pokeapi.co/api/v2/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
 
-        aptoParaCargar = true;
+        forUpload = true;
         offset = 0;
-        obtenerDatos(offset);
+        dataObtain(offset);
     }
 
-    private void obtenerDatos(int offset) {
+    private void dataObtain(int offset) {
         PokeapiService service = retrofit.create(PokeapiService.class);
-        Call<PokemonResquesta> pokemonResquestaCall = service.obtenerListaPokemon(20, offset);
+        Call<RequestPokemon> requestPokemonCall = service.listPoke(20, offset);
 
-        pokemonResquestaCall.enqueue(new Callback<PokemonResquesta>() {
+        requestPokemonCall.enqueue(new Callback<RequestPokemon>() {
             @Override
-            public void onResponse(Call<PokemonResquesta> call, Response<PokemonResquesta> response) {
-                aptoParaCargar = true;
+            public void onResponse(Call<RequestPokemon> call, Response<RequestPokemon> response) {
+                forUpload = true;
                 if ( response.isSuccessful()) {
 
-                    PokemonResquesta pokemonResquesta = response.body();
-                    ArrayList<Pokemon> listaPokemon = pokemonResquesta.getResults();
+                    RequestPokemon requestPokemon = response.body();
+                    ArrayList<Pokemon> listaPokemon = requestPokemon.getResults();
 
-                    listaPokemonAdapter.adicionarListaPokemon(listaPokemon);
+                    listPoker.addPokeList(listaPokemon);
 
 
 
@@ -102,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<PokemonResquesta> call, Throwable t) {
-                aptoParaCargar = true;
+            public void onFailure(Call<RequestPokemon> call, Throwable t) {
+                forUpload = true;
                 Log.e(TAG, "onFailure" + t.getMessage());
 
             }

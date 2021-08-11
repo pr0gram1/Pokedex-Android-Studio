@@ -6,13 +6,13 @@
 
 
     <ImageView
-        android:id="@+id/fotoImageView"
+        android:id="@+id/viewImage"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_gravity="center_horizontal"/>
 
     <TextView
-        android:id="@+id/nombreTextView"
+        android:id="@+id/viewText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
